@@ -3,83 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitCalc - Free Health & Fitness Calculators</title>
-    <meta name="description" content="Calculate BMI, BMR, TDEE, Macros and more with our free fitness tools.">
+    <title>FitCalc - Smart Fitness Calculators</title>
+    <meta name="description" content="Free and accurate tools to calculate BMI, BMR, TDEE, Calories, and Macros. Start your fitness journey today.">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Navigation -->
     <header>
         <nav>
-            <a href="index.html" class="logo">💪 FitCalc</a>
+            <a href="index.html" class="logo"><i class="fas fa-heartbeat"></i> FitCalc</a>
             <div class="nav-links">
-                <a href="index.html">Home</a>
+                <a href="#tools">Tools</a>
                 <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+                <a href="#contact" class="nav-btn">Contact Us</a>
             </div>
         </nav>
     </header>
 
-    <main>
-        <div class="container" style="text-align: center;">
-            <h1>Master Your Fitness Journey</h1>
-            <p>Accurate, free, and instant health calculators for your daily needs.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h1>Transform Your Body<br> With <span>Precise Data</span></h1>
+            <p>Stop guessing your diet. Use our scientifically accurate calculators to check your BMI, Daily Calories, Macros, and Hydration levels instantly.</p>
+            <a href="#tools" class="cta-btn">Start Calculating Now <i class="fas fa-arrow-down"></i></a>
+        </div>
+    </section>
+
+    <!-- Tools Grid -->
+    <section id="tools" class="tools-section">
+        <div class="section-title">
+            <h2>Our Premium Tools</h2>
+            <p>Select a calculator to get started</p>
         </div>
 
-        <section class="tools-grid">
+        <div class="tools-grid">
+            <!-- Tool 1 -->
             <a href="bmi.html" class="tool-card">
-                <span class="tool-icon">⚖️</span>
+                <div class="tool-icon"><i class="fas fa-weight"></i></div>
                 <h3>BMI Calculator</h3>
-                <p>Check your Body Mass Index</p>
+                <p>Check if you are Underweight, Normal, or Overweight instantly.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
             </a>
-            <a href="bmr.html" class="tool-card">
-                <span class="tool-icon">🔥</span>
-                <h3>BMR Calculator</h3>
-                <p>Basal Metabolic Rate</p>
-            </a>
-            <a href="tdee.html" class="tool-card">
-                <span class="tool-icon">⚡</span>
-                <h3>TDEE Calculator</h3>
-                <p>Total Daily Energy Expenditure</p>
-            </a>
+            
+            <!-- Tool 2 -->
             <a href="calories.html" class="tool-card">
-                <span class="tool-icon">🍽️</span>
-                <h3>Calorie Calculator</h3>
-                <p>Lose or gain weight</p>
+                <div class="tool-icon"><i class="fas fa-utensils"></i></div>
+                <h3>Daily Calories</h3>
+                <p>Find out exactly how much you need to eat to Lose or Gain weight.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
             </a>
+
+            <!-- Tool 3 -->
             <a href="macros.html" class="tool-card">
-                <span class="tool-icon">🥩</span>
+                <div class="tool-icon"><i class="fas fa-chart-pie"></i></div>
                 <h3>Macro Calculator</h3>
-                <p>Protein, Carbs & Fats</p>
+                <p>Optimize your diet with the perfect ratio of Protein, Carbs, and Fats.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
             </a>
+
+            <!-- Tool 4 -->
+            <a href="tdee.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-running"></i></div>
+                <h3>TDEE Calculator</h3>
+                <p>Calculate your Total Daily Energy Expenditure based on activity.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
+            </a>
+
+            <!-- Tool 5 -->
+            <a href="bmr.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-fire"></i></div>
+                <h3>BMR Calculator</h3>
+                <p>Know how many calories your body burns while at complete rest.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
+            </a>
+
+            <!-- Tool 6 -->
             <a href="water.html" class="tool-card">
-                <span class="tool-icon">💧</span>
+                <div class="tool-icon"><i class="fas fa-tint"></i></div>
                 <h3>Water Intake</h3>
-                <p>Hydration calculator</p>
+                <p>Stay hydrated. Calculate exactly how much water you need daily.</p>
+                <span class="arrow-link">Calculate Now &rarr;</span>
             </a>
-        </section>
-
-        <div class="container" id="about" style="margin-top: 2rem;">
-            <h2>About Us</h2>
-            <p>We provide scientifically accurate fitness tools to help you achieve your health goals. Whether you are looking to lose weight, build muscle, or stay hydrated, our calculators are here to guide you.</p>
         </div>
-    </main>
+    </section>
 
+    <!-- Why Choose Us -->
+    <section class="features-section">
+        <div class="section-title">
+            <h2 style="color: white;">Why Use FitCalc?</h2>
+            <p style="color: #bdc3c7;">We make fitness simple and scientific.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fas fa-bolt"></i>
+                <h3>Fast & Responsive</h3>
+                <p>Get results in milliseconds without page reloads.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-check-circle"></i>
+                <h3>Scientifically Accurate</h3>
+                <p>We use Mifflin-St Jeor & WHO approved formulas.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Mobile First</h3>
+                <p>Designed to work perfectly on your phone and tablet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div>
-                <h3>FitCalc</h3>
-                <p>Your #1 source for fitness tools.</p>
+                <h3><i class="fas fa-heartbeat"></i> FitCalc</h3>
+                <p>Your journey to a healthier life starts with data.</p>
             </div>
             <div class="footer-links">
+                <h4>Quick Links</h4>
                 <a href="index.html">Home</a>
-                <a href="#contact">Contact</a>
+                <a href="bmi.html">BMI Calculator</a>
+                <a href="calories.html">Calorie Counter</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Use</a>
+                <a href="#contact">Contact Support</a>
             </div>
         </div>
         <div class="disclaimer">
-            MEDICAL DISCLAIMER: The content of this website is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician.
+            Disclaimer: The results provided by these calculators are estimates based on standard formulas. Always consult a healthcare professional before starting a new diet or exercise plan.
         </div>
     </footer>
+
 </body>
 </html>
