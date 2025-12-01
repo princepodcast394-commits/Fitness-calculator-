@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Calorie Intake Calculator</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef6ff;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        max-width: 450px;
+        margin: auto;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    }
+    h2 {
+        text-align: center;
+        color: #0b66c3;
+        margin-bottom: 10px;
+    }
+    label {
+        font-weight: bold;
+        margin-top: 12px;
+        display: block;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background: #0b66c3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #084c93;
+    }
+    .result {
+        margin-top: 20px;
+        padding: 14px;
+        background: #e7f2ff;
+        border-left: 5px solid #0b66c3;
+        border-radius: 6px;
+        font-size: 17px;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2>Calorie Intake Calculator</h2>
+
+    <label>Gender</label>
+    <select id="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select>
+
+    <label>Age (Years)</label>
+    <input type="number" id="age" placeholder="Enter age">
+
+    <label>Weight (kg)</label>
+    <input type="number" id="weight" placeholder="Enter weight">
+
+    <label>Height (cm)</label>
+    <input type="number" id="height" placeholder="Enter height">
+
+    <label>Activity Level</label>
+    <select id="activity">
+        <option value="1.2">Sedentary (little or no exercise)</option>
+        <option value="1.375">Light Exercise (1–3 days/week)</option>
+        <option value="1.55">Moderate Exercise (3–5 days/week)</option>
+        <option value="1.725">Heavy Exercise (6–7 days/week)</option>
+        <option value="1.9">Athlete (very intense training)</option>
+    </select>
+
+    <button onclick="calculateCalories()">Calculate Calories</button>
+
+    <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<script>
+function calculateCalories() {
+    let gender = document.getElementById("gender").value;
+    let age = parseInt(document.getElementById("age").value);
+    let weight = parseFloat(document.getElementById("weight").value);
+    let height = parseFloat(document.getElementById("height").value);
+    let activity = parseFloat(document.getElementById("activity").value);
+
+    if (!age || !weight || !height) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    // BMR Calculation
+    let bmr;
+    if (gender === "male") {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+
+    // TDEE Calculation
+    let tdee = bmr * activity;
+
+    // Goals
+    let loseWeight = tdee - 500;
+    let maintainWeight = tdee;
+    let gainWeight = tdee + 300;
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <strong>Your Recommended Daily Calories:</strong><br><br>
+
+        <strong>Weight Loss:</strong> ${loseWeight.toFixed(0)} kcal/day<br>
+        <strong>Maintain Weight:</strong> ${maintainWeight.toFixed(0)} kcal/day<br>
+        <strong>Weight Gain:</strong> ${gainWeight.toFixed(0)} kcal/day<br><br>
+
+        <strong>BMR Used:</strong> ${bmr.toFixed(0)} kcal/day <br>
+        <strong>TDEE:</strong> ${tdee.toFixed(0)} kcal/day
+    `;
+}
+</script>
+
+</body>
+</html>
