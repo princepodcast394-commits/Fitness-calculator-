@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BMR Calculator — FitCalc</title>
+  <style>
+    :root{
+      --bg:#f7fbfc; --card:#ffffff; --accent:#0b6f63; --muted:#6b7280;
+      --radius:12px; --shadow:0 6px 18px rgba(12,34,56,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:#0f172a}
+    .wrap{max-width:880px;margin:26px auto;padding:18px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    h1{margin:0 0 8px;font-size:1.5rem}
+    p.lead{margin:0 0 14px;color:var(--muted)}
+    .grid{display:grid;gap:12px}
+    @media(min-width:880px){ .grid-2{grid-template-columns:1fr 360px} }
+    label{display:block;font-size:.9rem;margin-bottom:6px;color:#111827}
+    input[type="number"], select {
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ef;font-size:1rem;box-sizing:border-box;
+    }
+    .inline{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn.secondary{background:#eef3f2;color:var(--accent);border:1px solid #d7e9e3}
+    .result{margin-top:12px;padding:12px;border-radius:10px;background:#f1fbf9;border:1px solid #dff4ec}
+    .muted{color:var(--muted);font-size:.92rem}
+    .small{font-size:.85rem;color:var(--muted)}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .formula{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;background:#f8fafb;padding:8px;border-radius:8px;border:1px dashed #e2e8f0;margin-top:8px}
+    .footer{margin-top:18px;text-align:center;color:var(--muted);font-size:.85rem}
+    .error{color:#b91c1c;font-weight:700}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef6f3;color:var(--accent);font-weight:700}
+    .aside-list{list-style:none;padding:0;margin:0}
+    .aside-list li{margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <main class="wrap card" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">BMR Calculator (Mifflin-St Jeor)</h1>
+      <p class="lead">Apna weight, height aur age daaliye — BMR (Basal Metabolic Rate) calculate karein. (Not medical advice)</p>
+    </header>
+
+    <section class="grid grid-2" aria-label="calculator area">
+      <!-- Main calculator card -->
+      <div class="card" style="padding:14px">
+        <!-- Units -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <strong>Units</strong>
+          <div class="inline" role="radiogroup" aria-label="weight units">
+            <label style="margin:0"><input type="radio" name="weightUnit" value="kg" checked> kg</label>
+            <label style="margin:0"><input type="radio" name="weightUnit" value="lb"> lb</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label for="weight">Weight</label>
+          <input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 70">
+          <div class="small muted">Enter weight in selected unit.</div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label>Height units</label>
+          <div class="inline" role="radiogroup" aria-label="height units">
+            <label style="margin:0"><input type="radio" name="heightUnit" value="cm" checked> cm</label>
+            <label style="margin:0"><input type="radio" name="heightUnit" value="ftin"> ft + in</label>
+          </div>
+        </div>
+
+        <div id="heightCmRow" style="margin-bottom:12px">
+          <label for="heightCm">Height (cm)</label>
+          <input id="heightCm" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 170">
+        </div>
+
+        <div id="heightFtInRow" style="display:none;margin-bottom:12px">
+          <label>Height (ft / in)</label>
+          <div style="display:flex;gap:8px">
+            <input id="heightFt" type="number" min="0" step="1" placeholder="ft" inputmode="numeric">
+            <input id="heightIn" type="number" min="0" step="any" placeholder="in" inputmode="decimal">
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label for="age">Age (years)</label>
+          <input id="age" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 28">
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label for="gender">Gender</label>
+          <select id="gender" aria-describedby="genderHelp">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="both">Prefer not to say / Other (show both)</option>
+          </select>
+          <div id="genderHelp" class="small muted">If you choose "Other", both male & female BMR values will be shown.</div>
+        </div>
+
+        <div style="margin-bottom:10px">
+          <label for="activity">Optional: Activity level (for quick TDEE estimate)</label>
+          <select id="activity">
+            <option value="1">None (Just BMR)</option>
+            <option value="1.2">Sedentary (little/no exercise)</option>
+            <option value="1.375">Lightly active (1–3 days/week)</option>
+            <option value="1.55">Moderately active (3–5 days/week)</option>
+            <option value="1.725">Very active (6–7 days/week)</option>
+            <option value="1.9">Extra active (hard daily exercise)</option>
+          </select>
+          <div class="small muted">Choose a factor to get a TDEE estimate (BMR × factor).</div>
+        </div>
+
+        <div class="controls" style="margin-top:8px">
+          <button id="calcBtn" class="btn" aria-live="polite">Calculate BMR</button>
+          <button id="resetBtn" class="btn secondary" type="button">Reset</button>
+          <button id="copyBtn" class="btn secondary" type="button">Copy Result</button>
+        </div>
+
+        <div id="error" class="small error" role="status" aria-live="assertive" style="display:none;margin-top:10px"></div>
+
+        <div id="output" class="result" style="display:none" aria-live="polite" aria-atomic="true">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div><strong id="bmrValue">BMR: — kcal/day</strong></div>
+              <div class="muted small" id="tdeeValue">TDEE: — kcal/day (if activity applied)</div>
+            </div>
+            <div>
+              <div class="badge" id="badgeType">BMR</div>
+            </div>
+          </div>
+
+          <div class="formula" id="formulaText">Formula: BMR = 10×weight(kg) + 6.25×height(cm) − 5×age + (±)</div>
+          <div class="small" id="explain">Explanation: —</div>
+        </div>
+      </div>
+
+      <!-- Aside with quick notes -->
+      <aside class="card" style="padding:14px">
+        <h2 style="font-size:1rem;margin-bottom:8px">Quick Notes</h2>
+        <ul class="aside-list small muted">
+          <li><strong>Mifflin-St Jeor</strong> formula is widely used and accurate for many adults.</li>
+          <li>BMR = energy your body needs at rest — does not include activity.</li>
+          <li>If you chose "Other", both male & female BMRs will be shown for reference.</li>
+          <li>For medical concerns consult a healthcare professional.</li>
+        </ul>
+
+        <h3 style="margin-top:12px;font-size:.95rem">Example</h3>
+        <p class="small muted">70 kg, 170 cm, 30 years (male) → BMR ≈ 10×70 + 6.25×170 − 5×30 + 5 = 1,620 kcal/day</p>
+      </aside>
+    </section>
+
+    <div class="footer">
+      <p class="small muted">Formula displayed: Males: +5, Females: −161 · Not medical advice.</p>
+    </div>
+  </main>
+
+  <script>
+    // Constants for conversions
+    const LB_TO_KG = 0.45359237;
+    const IN_TO_CM = 2.54;
+
+    // Elements
+    const weightEl = document.getElementById('weight');
+    const heightCmEl = document.getElementById('heightCm');
+    const heightFtEl = document.getElementById('heightFt');
+    const heightInEl = document.getElementById('heightIn');
+    const ageEl = document.getElementById('age');
+    const genderEl = document.getElementById('gender');
+    const activityEl = document.getElementById('activity');
+
+    const calcBtn = document.getElementById('calcBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    const output = document.getElementById('output');
+    const bmrValueEl = document.getElementById('bmrValue');
+    const tdeeValueEl = document.getElementById('tdeeValue');
+    const formulaText = document.getElementById('formulaText');
+    const explain = document.getElementById('explain');
+    const errorEl = document.getElementById('error');
+    const badgeTypeEl = document.getElementById('badgeType');
+
+    const heightCmRow = document.getElementById('heightCmRow');
+    const heightFtInRow = document.getElementById('heightFtInRow');
+
+    const weightRadios = document.getElementsByName('weightUnit');
+    const heightRadios = document.getElementsByName('heightUnit');
+
+    // Show/hide height inputs
+    function updateHeightInputs(){
+      const selected = Array.from(heightRadios).find(r=>r.checked).value;
+      if(selected === 'cm'){
+        heightCmRow.style.display = '';
+        heightFtInRow.style.display = 'none';
+      } else {
+        heightCmRow.style.display = 'none';
+        heightFtInRow.style.display = '';
+      }
+    }
+    Array.from(heightRadios).forEach(r=>r.addEventListener('change', updateHeightInputs));
+    updateHeightInputs();
+
+    function getSelectedWeightUnit(){ return Array.from(weightRadios).find(r=>r.checked).value; }
+    function getSelectedHeightUnit(){ return Array.from(heightRadios).find(r=>r.checked).value; }
+
+    function showError(msg){
+      errorEl.style.display = 'block';
+      errorEl.textContent = msg;
+    }
+    function clearError(){ errorEl.style.display = 'none'; errorEl.textContent = ''; }
+
+    // Arithmetic helpers (careful step-by-step)
+    function toKg(weightRaw, unit){
+      // weightRaw must be finite positive number
+      if(unit === 'lb') return weightRaw * LB_TO_KG;
+      return weightRaw;
+    }
+    function toCmFromFtIn(ft, inch){
+      const totalIn = (Number(ft) || 0) * 12 + (Number(inch) || 0);
+      return totalIn * IN_TO_CM;
+    }
+
+    // Main calculation
+    function calcBMR(){
+      clearError();
+      output.style.display = 'none';
+
+      // Read inputs
+      const weightRaw = parseFloat(weightEl.value);
+      const weightUnit = getSelectedWeightUnit();
+      if(!isFinite(weightRaw) || weightRaw <= 0){ showError('Please enter a valid weight greater than 0.'); return; }
+
+      let heightCm;
+      const hUnit = getSelectedHeightUnit();
+      if(hUnit === 'cm'){
+        const hcm = parseFloat(heightCmEl.value);
+        if(!isFinite(hcm) || hcm <= 0){ showError('Please enter a valid height in cm greater than 0.'); return; }
+        heightCm = hcm;
+      } else {
+        const ft = parseFloat(heightFtEl.value) || 0;
+        const inch = parseFloat(heightInEl.value) || 0;
+        if(ft < 0 || inch < 0){ showError('Feet and inches must be non-negative.'); return; }
+        if(ft === 0 && inch === 0){ showError('Please enter height in feet & inches.'); return; }
+        heightCm = toCmFromFtIn(ft, inch);
+      }
+
+      const age = parseInt(ageEl.value, 10);
+      if(!isFinite(age) || age <= 0){ showError('Please enter a valid age greater than 0.'); return; }
+
+      // Convert weight to kg (digit-by-digit)
+      const weightKg = toKg(weightRaw, weightUnit);
+
+      // Perform Mifflin-St Jeor calculations precisely
+      // Using stepwise computation to avoid floating surprises:
+      // base = 10*weightKg
+      // hTerm = 6.25*heightCm
+      // aTerm = 5*age
+      const base = 10 * weightKg;
+      const hTerm = 6.25 * heightCm;
+      const aTerm = 5 * age;
+
+      // maleBMR = base + hTerm - aTerm + 5
+      // femaleBMR = base + hTerm - aTerm - 161
+      const maleBMR_raw = base + hTerm - aTerm + 5;
+      const femaleBMR_raw = base + hTerm - aTerm - 161;
+
+      if(!isFinite(maleBMR_raw) || !isFinite(femaleBMR_raw)){ showError('Calculation error — check inputs.'); return; }
+
+      // Round to nearest kcal (integer)
+      const maleBMR = Math.round(maleBMR_raw);
+      const femaleBMR = Math.round(femaleBMR_raw);
+
+      const gender = genderEl.value;
+      const activityFactor = parseFloat(activityEl.value);
+
+      // Prepare display
+      if(gender === 'male'){
+        bmrValueEl.textContent = `BMR: ${maleBMR} kcal/day (Male)`;
+        if(activityFactor && activityFactor !== 1){
+          const tdee = Math.round(maleBMR * activityFactor);
+          tdeeValueEl.textContent = `TDEE estimate: ${tdee} kcal/day (factor ${activityFactor})`;
+        } else {
+          tdeeValueEl.textContent = `TDEE: No activity factor applied`;
+        }
+        formulaText.textContent = `Formula (Male): BMR = 10×${weightKg.toFixed(1)} + 6.25×${heightCm.toFixed(0)} − 5×${age} + 5 = ${maleBMR} kcal/day`;
+        explain.innerHTML = `Mifflin-St Jeor formula used. Your BMR is the estimated energy required at rest.`;
+        badgeTypeEl.textContent = 'Male BMR';
+      } else if(gender === 'female'){
+        bmrValueEl.textContent = `BMR: ${femaleBMR} kcal/day (Female)`;
+        if(activityFactor && activityFactor !== 1){
+          const tdee = Math.round(femaleBMR * activityFactor);
+          tdeeValueEl.textContent = `TDEE estimate: ${tdee} kcal/day (factor ${activityFactor})`;
+        } else {
+          tdeeValueEl.textContent = `TDEE: No activity factor applied`;
+        }
+        formulaText.textContent = `Formula (Female): BMR = 10×${weightKg.toFixed(1)} + 6.25×${heightCm.toFixed(0)} − 5×${age} − 161 = ${femaleBMR} kcal/day`;
+        explain.innerHTML = `Mifflin-St Jeor formula used. Your BMR is the estimated energy required at rest.`;
+        badgeTypeEl.textContent = 'Female BMR';
+      } else {
+        // show both values for reference
+        bmrValueEl.textContent = `BMR (Male): ${maleBMR} kcal/day — BMR (Female): ${femaleBMR} kcal/day`;
+        if(activityFactor && activityFactor !== 1){
+          const tdeeM = Math.round(maleBMR * activityFactor);
+          const tdeeF = Math.round(femaleBMR * activityFactor);
+          tdeeValueEl.textContent = `TDEE estimates: ${tdeeM} (male), ${tdeeF} (female) — factor ${activityFactor}`;
+        } else {
+          tdeeValueEl.textContent = `TDEE: No activity factor applied`;
+        }
+        formulaText.textContent = `Formula: BMR = 10×weight(kg) + 6.25×height(cm) − 5×age + (5 for male / −161 for female)`;
+        explain.innerHTML = `You selected "Other" — both male & female BMRs are shown for reference. Consult a professional for personalized advice.`;
+        badgeTypeEl.textContent = 'BMR';
+      }
+
+      // Show and focus output
+      output.style.display = '';
+      output.focus?.();
+    }
+
+    calcBtn.addEventListener('click', calcBMR);
+
+    // Reset
+    resetBtn.addEventListener('click', function(){
+      weightEl.value = '';
+      heightCmEl.value = '';
+      heightFtEl.value = '';
+      heightInEl.value = '';
+      ageEl.value = '';
+      genderEl.value = 'male';
+      activityEl.value = '1';
+      clearError();
+      output.style.display = 'none';
+      // reset units default
+      document.querySelector('input[name="weightUnit"][value="kg"]').checked = true;
+      document.querySelector('input[name="heightUnit"][value="cm"]').checked = true;
+      updateHeightInputs();
+    });
+
+    // Copy result
+    copyBtn.addEventListener('click', async function(){
+      if(output.style.display === 'none'){
+        showError('No result to copy. Please calculate first.');
+        return;
+      }
+      clearError();
+      const text = `${bmrValueEl.textContent}\n${tdeeValueEl.textContent}\n${formulaText.textContent}`;
+      try{
+        await navigator.clipboard.writeText(text);
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=> copyBtn.textContent = orig, 1400);
+      }catch(err){
+        showError('Clipboard not available — select and copy manually.');
+      }
+    });
+
+    // Enter key triggers calculate (but avoid triggering when focus on inputs that accept Enter)
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        const tag = document.activeElement.tagName.toLowerCase();
+        if(tag === 'input' || tag === 'select'){
+          // if active element is number input, still allow enter to calculate
+          calcBMR();
+        }
+      }
+    });
+
+    // Remove error on input
+    [weightEl, heightCmEl, heightFtEl, heightInEl, ageEl].forEach(el=>{
+      el.addEventListener('input', ()=> clearError());
+    });
+
+    // Make output focusable for screen readers
+    output.setAttribute('tabindex','-1');
+  </script>
+</body>
+</html>
