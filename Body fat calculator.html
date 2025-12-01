@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Fat Calculator</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef6ff;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        max-width: 450px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.17);
+    }
+    h2 {
+        text-align: center;
+        color: #0b66c3;
+        margin-bottom: 10px;
+    }
+    label {
+        font-weight: bold;
+        margin-top: 12px;
+        display: block;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background: #0b66c3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #084c93;
+    }
+    .result {
+        margin-top: 20px;
+        padding: 14px;
+        background: #e7f2ff;
+        border-left: 5px solid #0b66c3;
+        border-radius: 6px;
+        font-size: 17px;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2>Body Fat Calculator</h2>
+
+    <label>Gender</label>
+    <select id="gender" onchange="toggleHipField()">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select>
+
+    <label>Age (Years)</label>
+    <input type="number" id="age" placeholder="Enter age">
+
+    <label>Height (cm)</label>
+    <input type="number" id="height" placeholder="Enter height">
+
+    <label>Neck (cm)</label>
+    <input type="number" id="neck" placeholder="Enter neck size">
+
+    <label>Waist (cm)</label>
+    <input type="number" id="waist" placeholder="Enter waist size">
+
+    <div id="hipSection" style="display:none;">
+        <label>Hip (cm)</label>
+        <input type="number" id="hip" placeholder="Enter hip size (only for females)">
+    </div>
+
+    <button onclick="calculateBodyFat()">Calculate Body Fat</button>
+
+    <div id="result" class="result" style="display:none;"></div>
+</div>
+
+
+<script>
+function toggleHipField() {
+    let gender = document.getElementById("gender").value;
+    document.getElementById("hipSection").style.display = 
+        gender === "female" ? "block" : "none";
+}
+
+function calculateBodyFat() {
+    let gender = document.getElementById("gender").value;
+    let age = parseInt(document.getElementById("age").value);
+    let height = parseFloat(document.getElementById("height").value);
+    let neck = parseFloat(document.getElementById("neck").value);
+    let waist = parseFloat(document.getElementById("waist").value);
+    let hip = parseFloat(document.getElementById("hip")?.value);
+
+    if (!age || !height || !neck || !waist || (gender === "female" && !hip)) {
+        alert("Please fill all required fields!");
+        return;
+    }
+
+    let bodyFat;
+
+    if (gender === "male") {
+        // US NAVY FORMULA (Male)
+        bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) 
+               + 0.15456 * Math.log10(height)) - 450;
+    } else {
+        // US NAVY FORMULA (Female)
+        bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) 
+               + 0.221 * Math.log10(height)) - 450;
+    }
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <strong>Your Body Fat Percentage:</strong> ${bodyFat.toFixed(2)}%
+    `;
+}
+</script>
+
+</body>
+</html>
